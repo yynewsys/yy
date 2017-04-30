@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="com.yy.role-web:war">
-    <output-path>$PROJECT_DIR$/com.yy.role-web/target</output-path>
-    <root id="archive" name="com.yy.role-web-1.0-SNAPSHOT.war">
-      <element id="artifact" artifact-name="com.yy.role-web:war exploded" />
-    </root>
-  </artifact>
-</component>
