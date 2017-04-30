@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.master.modules.sys.dao.DictVsClinicDao">
+    
+	<sql id="dictVsClinicColumns">
+		a.dict_id AS "dictId",
+		a.clinic_id AS "clinicId",
+		a.org_id AS "orgId",
+		a.executive_dept as "executiveDept.id",
+		od.dept_name as "executiveDept.deptName"
+	</sql>
+	
+	<sql id="dictVsClinicJoins">
+		left join org_dept od on a.executive_dept=od.id
+	</sql>
+    
+	<select id="get" resultType="DictVsClinic">
+		SELECT 
+			<include refid="dictVsClinicColumns"/>
+		FROM dict_vs_clinic a
+		<include refid="dictVsClinicJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="DictVsClinic">
+		SELECT 
+			<include refid="dictVsClinicColumns"/>
+		FROM dict_vs_clinic a
+		<include refid="dictVsClinicJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="DictVsClinic">
+		SELECT 
+			<include refid="dictVsClinicColumns"/>
+		FROM dict_vs_clinic a
+		<include refid="dictVsClinicJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO dict_vs_clinic(
+			dict_id,
+			clinic_id,
+			org_id,
+			executive_dept
+		) VALUES (
+			#{dictId},
+			#{clinicId},
+			#{orgId},
+			 #{executiveDept.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE dict_vs_clinic SET 	
+			dict_id = #{dictId},
+			clinic_id = #{clinicId},
+			org_id = #{orgId},
+			executive_dept= #{executiveDept.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM dict_vs_clinic
+		<where>
+			<if test="dictId!=null and dictId!=''">
+				dict_id = #{dictId}
+			</if>
+			<if test="clinicId!=null and clinicId!=''">
+				and clinic_id=#{clinicId}
+			</if>
+		</where>
+
+	</update>
+	
+</mapper>

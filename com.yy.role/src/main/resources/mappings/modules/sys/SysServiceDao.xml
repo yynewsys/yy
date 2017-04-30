@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.master.modules.sys.dao.SysServiceDao">
+    
+	<select id="get" resultType="SysService">
+		SELECT 
+			id AS "id",
+			server_name AS "serverName",
+			service_type AS "serverType",
+			service_class AS "serverClass",
+			service_image AS "serviceImage",
+			description AS "description"
+		FROM sys_service 
+		WHERE id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysService">
+		SELECT 
+			id AS "id",
+			server_name AS "serverName",
+			service_type AS "serverType",
+			service_class AS "serverClass",
+			service_image AS "serviceImage"
+		FROM sys_service 
+		WHERE del_flag = #{DEL_FLAG_NORMAL} 
+        <if test="serverName!=null and serverName!=''">
+			AND server_name like concat(concat('%',#{serverName}),'%')
+		</if>
+		<if test="serverType!=null and serverType!=''">
+			AND service_type = #{serverType}
+		</if>
+		<if test="description != null and description != ''">
+			AND description LIKE 
+					<if test="dbName == 'oracle'">'%'||#{description}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{description}+'%'</if>
+					<if test="dbName == 'mysql'">CONCAT('%', #{description}, '%')</if>
+		</if>
+		ORDER BY update_date DESC
+	</select>
+	
+	<select id="findAllList" resultType="SysService">
+		SELECT 
+			* 
+		FROM sys_service 
+		WHERE del_flag = #{DEL_FLAG_NORMAL} 
+		ORDER BY  update_date DESC
+	</select>
+	
+	<select id="findTypeList" resultType="string">
+		SELECT 
+			type 
+		FROM sys_service 
+		WHERE del_flag = #{DEL_FLAG_NORMAL}
+		ORDER BY update_date
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_service(
+			id, 
+			server_name,
+			service_type,
+			service_class,
+			service_image,
+			description,
+			create_by, 
+			create_date, 
+			update_by, 
+			update_date, 
+			remarks, 
+			del_flag
+		) VALUES (
+			#{id}, 
+			#{serverName},
+			#{serverType},
+			#{serverClass},
+			#{serviceImage},
+			#{description},
+			#{createBy.id}, 
+			#{createDate}, 
+			#{updateBy.id}, 
+			#{updateDate}, 
+			#{remarks}, 
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_service SET 
+			server_name = #{serverName},
+			service_type = #{serverType},
+			service_class = #{serverClass},
+			service_image = #{serviceImage},
+			description = #{description},
+			update_by = #{updateBy.id}, 
+			update_date = #{updateDate}, 
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_service SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

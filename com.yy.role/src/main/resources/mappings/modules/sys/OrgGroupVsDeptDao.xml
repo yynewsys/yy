@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.master.modules.sys.dao.OrgGroupVsDeptDao">
+    
+	<sql id="orgGroupVsDeptColumns">
+		a.group_id AS "groupId",
+		a.dept_id AS "deptId"
+	</sql>
+	
+	<sql id="orgGroupVsDeptJoins">
+	</sql>
+    
+	<select id="get" resultType="OrgGroupVsDept">
+		SELECT 
+			<include refid="orgGroupVsDeptColumns"/>
+		FROM org_group_vs_dept a
+		<include refid="orgGroupVsDeptJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OrgGroupVsDept">
+		SELECT 
+			<include refid="orgGroupVsDeptColumns"/>
+		FROM org_group_vs_dept a
+		<include refid="orgGroupVsDeptJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="OrgGroupVsDept">
+		SELECT 
+			<include refid="orgGroupVsDeptColumns"/>
+		FROM org_group_vs_dept a
+		<include refid="orgGroupVsDeptJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	<select id="findDeptIdByGroupId" resultType="String">
+		SELECT a.dept_id FROM org_group_vs_dept a WHERE a.group_id=#{groupId}
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO org_group_vs_dept(
+			group_id,
+			dept_id
+		) VALUES (
+			#{groupId},
+			#{deptId}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE org_group_vs_dept SET 	
+			group_id = #{groupId},
+			dept_id = #{deptId}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM org_group_vs_dept
+		WHERE id = #{id}
+	</update>
+
+	<delete id="delByGroupId">
+		delete from org_group_vs_dept where group_id=#{groupId}
+	</delete>
+
+    <select id="findGroupIdByDeptId" resultType="String">
+        select group_id from org_group_vs_dept where dept_id=#{deptId}
+    </select>
+	
+</mapper>

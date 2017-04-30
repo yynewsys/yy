@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.master.modules.sys.dao.OrgGroupVsUserDao">
+    
+	<sql id="orgGroupVsUserColumns">
+		a.group_id AS "groupId",
+		a.user_id AS "user.id"
+	</sql>
+	
+	<sql id="orgGroupVsUserJoins">
+		LEFT JOIN sys_user u2 ON u2.id = a.user_id
+	</sql>
+    
+	<select id="get" resultType="OrgGroupVsUser">
+		SELECT 
+			<include refid="orgGroupVsUserColumns"/>
+		FROM org_group_vs_user a
+		<include refid="orgGroupVsUserJoins"/>
+		WHERE a.user_id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OrgGroupVsUser">
+		SELECT 
+			<include refid="orgGroupVsUserColumns"/>
+		FROM org_group_vs_user a
+		<include refid="orgGroupVsUserJoins"/>
+		<where>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="OrgGroupVsUser">
+		SELECT 
+			<include refid="orgGroupVsUserColumns"/>
+		FROM org_group_vs_user a
+		<include refid="orgGroupVsUserJoins"/>
+		<where>
+			
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO org_group_vs_user(
+			group_id,
+			user_id
+		) VALUES (
+			#{groupId},
+			#{user.id}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE org_group_vs_user SET 	
+			group_id = #{groupId},
+			user_id = #{user.id}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		DELETE FROM org_group_vs_user
+		WHERE id = #{id}
+	</update>
+	<update id="delVsUser">
+		DELETE FROM org_group_vs_user where group_id=#{groupId} and user_id=#{user.id}
+	</update>
+    <update id="delVsGroup">
+        DELETE FROM org_group_vs_user where group_id=#{groupId}
+    </update>
+    <!--根据用户Id查询分组Id chenxy-->
+    <select id="findGroupByUserId" resultType="String">
+        select group_id from org_group_vs_user where user_id=#{userId}
+    </select>
+    <!--根据分组Id查询User对象-->
+    <select id="findUserByGroupId" resultType="User">
+		   SELECT
+		  a.id,
+		  b.name
+		FROM
+		  sys_user a,
+		  person_info b
+		WHERE a.id IN
+		  (SELECT DISTINCT ou.user_id FROM org_group_vs_dept od,org_group_vs_user ou WHERE od.group_id=ou.group_id AND od.dept_id=#{deptId})
+		  AND b.id = a.persion_id
+    </select>
+</mapper>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.master.modules.sys.dao.OrgRoleDao">
+    
+	<sql id="orgRoleColumns">
+		a.id AS "id",
+		a.role_name AS "roleName",
+		a.org_id AS "orgId",
+		a.del_flag AS "delFlag",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks"
+	</sql>
+	
+	<sql id="orgRoleJoins">
+	</sql>
+    
+	<select id="get" resultType="OrgRole">
+		SELECT 
+			<include refid="orgRoleColumns"/>
+		FROM org_role a
+		<include refid="orgRoleJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OrgRole">
+		SELECT
+            a.id AS "id",
+            a.role_name AS "roleName",
+            a.org_id AS "orgId",
+            a.del_flag AS "delFlag",
+            a.create_by AS "createBy.id",
+            a.create_date AS "createDate",
+            a.update_by AS "updateBy.id",
+            a.update_date AS "updateDate",
+            a.remarks AS "remarks",
+            b.org_name as 'orgName'
+		FROM org_role a,sys_company b
+		<include refid="orgRoleJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+            and a.org_id=b.id
+			<if test="roleName!=null and roleName!=''">
+				and a.role_name like concat('%',#{roleName},'%')
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="OrgRole">
+		SELECT 
+			<include refid="orgRoleColumns"/>
+		FROM org_role a
+		<include refid="orgRoleJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO org_role(
+			id,
+			role_name,
+			org_id,
+			del_flag,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks
+		) VALUES (
+			#{id},
+			#{roleName},
+			#{orgId},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE org_role SET 	
+			role_name = #{roleName},
+			org_id = #{orgId},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE org_role SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+
+    <select id="findStaffVsRole" resultType="OrgRole">
+        SELECT H.STAFF_ID AS 'staffId',H.ROLE_ID AS 'roleId',B.NAME AS 'NAME',D.`role_name` AS 'ROLENAME',F.`dept_name` AS 'DEPTNAME'
+        FROM SYS_USER A,PERSON_INFO B,sys_login_name C,ORG_ROLE D,ORG_STAFF E,ORG_DEPT F,ORG_STAFF G,staff_vs_role H
+        WHERE A.`persion_id`=B.`id` AND C.`user_id`=A.`id` AND E.`dept_id`=F.`id`
+        AND E.`user_id`=A.`id` AND  D.`id`=H.ROLE_ID AND G.`id`=H.STAFF_ID
+        <choose>
+            <when test="page !=null and page.orderBy != null and page.orderBy != ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+                ORDER BY B.NAME DESC
+            </otherwise>
+        </choose>
+    </select>
+</mapper>

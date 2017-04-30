@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template>
+	<name>controller</name>
+	<filePath>src/main/java/${packageName}/${moduleName}/web/${subModuleName}</filePath>
+	<fileName>${ClassName}Controller.java</fileName>
+	<content><![CDATA[
+/**
+ * yy
+ */
+package ${packageName}.${moduleName}.web<#if subModuleName != "">.${subModuleName}</#if>;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.yy.master.common.data.StringData;
+import com.yy.master.common.persistence.Page;
+import com.yy.master.common.web.BaseController;
+import com.yy.master.common.utils.StringUtils;
+import ${packageName}.${moduleName}.entity<#if subModuleName != "">.${subModuleName}</#if>.${ClassName};
+import ${packageName}.${moduleName}.service<#if subModuleName != "">.${subModuleName}</#if>.${ClassName}Service;
+
+/**
+ * ${functionName}Controller
+ * @author ${functionAuthor}
+ * @version ${functionVersion}
+ */
+@Controller
+@RequestMapping(value = "${r"${adminPath}"}/${urlPrefix}")
+public class ${ClassName}Controller extends BaseController {
+
+	@Autowired
+	private ${ClassName}Service ${className}Service;
+	
+	@ModelAttribute
+	public ${ClassName} get(@RequestParam(required=false) String id) {
+		${ClassName} entity = null;
+		if (StringUtils.isNotBlank(id)){
+			entity = ${className}Service.get(id);
+		}
+		if (entity == null){
+			entity = new ${ClassName}();
+		}
+		return entity;
+	}
+	
+	@RequiresPermissions("user")
+	@RequestMapping(value = {"index", ""})
+	public String list(${ClassName} ${className}, HttpServletRequest request, HttpServletResponse response, Model model) {
+		Page<${ClassName}> page = ${className}Service.findPage(new Page<${ClassName}>(request, response), ${className}); 
+		model.addAttribute("page", page);
+		return "${lastPackageName}/${viewPrefix}Index";
+	}
+
+	@RequiresPermissions("user")
+	@RequestMapping(value = "form")
+	public String form(${ClassName} ${className}, Model model) {
+		model.addAttribute("${className}", ${className});
+		return "${lastPackageName}/${viewPrefix}Form";
+	}
+
+	@RequiresPermissions("user")
+	@RequestMapping(value = "save")
+	@ResponseBody
+	public StringData save(${ClassName} ${className}, Model model) {
+	    StringData data=new StringData();
+		int i=${className}Service.save(${className});
+        if(i>0){
+            data.setCode("success");
+            data.setData("保存${functionNameSimple}成功");
+        }else{
+            data.setCode("error");
+            data.setData("保存${functionNameSimple}失败");
+        }
+        return data;
+	}
+	@RequiresPermissions("user")
+	@RequestMapping(value = "delete")
+	@ResponseBody
+	public StringData delete(${ClassName} ${className}) {
+	    StringData data=new StringData();
+		int i=${className}Service.delete(${className});
+        if(i>0){
+            data.setCode("success");
+            data.setData("删除${functionNameSimple}成功");
+        }else{
+            data.setCode("error");
+            data.setData("删除${functionNameSimple}失败");
+        }
+		return data;
+	}
+
+}]]>
+	</content>
+</template>

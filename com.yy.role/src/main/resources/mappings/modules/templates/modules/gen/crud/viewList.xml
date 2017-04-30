@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template>
+	<name>viewList</name>
+	<filePath>src/main/webapp/WEB-INF/views/${lastPackageName}/${moduleName}/${subModuleName}</filePath>
+	<fileName>${className}Index.jsp</fileName>
+	<content>
+<![CDATA[
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<script type="text/javascript">
+		function page(n,s){
+			$("#pageNo").val(n);
+			$("#pageSize").val(s);
+			$("#searchForm").submit();
+        	return false;
+        }
+</script>
+    <div class="content-wrap">
+        <div class="wrapper" style="bottom: 50px;">
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a href="#"   onclick="loadDiv('mainCenterDiv','${r"${ctx}"}/${urlPrefix}/index')">${functionNameSimple}列表</a>
+                </li>
+                <li>
+                    <a href="#" onclick="loadDiv('mainCenterDiv','${r"${ctx}"}/${urlPrefix}/form')">${functionNameSimple}添加</a>
+                </li>
+            </ul>
+            <section class="panel panel-default">
+                <div class="panel-body">
+                    <div class="table-responsive no-border">
+                        <div class="datatable-top">
+                            <div class="pull-left">
+                            	<form:form id="searchForm" modelAttribute="${className}"  onsubmit="return loadDivForm('mainCenterDiv','searchFormDict','${r"${ctx}"}/${urlPrefix}/index');" method="post" class="form-inline">
+                                    <input id="pageNo" name="pageNo" type="hidden" value="${r"${page.pageNo}"}"/>
+                                    <input id="pageSize" name="pageSize" type="hidden" value="${r"${page.pageSize}"}"/>
+                                    <ul class="ul-form">
+                                            <li class="btns"><input id="btnSubmit" class="btn btn-primary" type="submit" value="查询"/></li>
+                                            <li class="clearfix"></li>
+                                    </ul>
+                                </form:form>
+                            </div>
+                        </div>
+                        <table id="contentTable" class="table table-bordered table-striped mg-t datatable">
+                            <thead>
+                                <tr>
+                                    <#list table.columnList as c>
+                                        <th>${c.comments}</th>
+                                    </#list>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <c:forEach items="${r"${page.list}"}" var="${className}">
+                                <tr>
+                                    <#list table.columnList as c>
+                                        <td> ${"$"}{${className}.${c.javaFieldId}}</td>
+                                    </#list>
+                                    <td>
+                                        <a href="#" onclick="loadDiv('mainCenterDiv','${r"${ctx}"}/${urlPrefix}/form?id=${"${"+className+".id}"}')" class="btn btn-success btn-xs">修改</a>
+                                        <a href="#"  class="applyBt btn btn-danger btn-xs" onclick="confirmExtend('确认要删除该${functionNameSimple}吗？',function(){delLoad('mainCenterDiv','${r"${ctx}"}/${urlPrefix}/delete?id=${"${"+className+".id}"}','${r"${ctx}"}/sys/dict/index')})">删除</a>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+
+                        </table>
+                        <div class="pagination">${r"${page}"}</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+]]>
+	</content>
+</template>

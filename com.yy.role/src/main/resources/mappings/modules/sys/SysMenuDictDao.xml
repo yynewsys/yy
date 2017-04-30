@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.master.modules.sys.dao.SysMenuDictDao">
+    
+	<sql id="sysMenuDictColumns">
+		a.id AS "id",
+		a.parent_id AS "parent.id",
+		a.parent_ids AS "parentIds",
+		a.name AS "name",
+		a.href AS "href",
+		a.target AS "target",
+		a.icon AS "icon",
+		a.is_show AS "isShow",
+		a.sort AS "sort",
+		a.permission AS "permission",
+		a.del_flag AS "delFlag",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		b.name AS "parent.name"
+	</sql>
+	
+	<sql id="sysMenuDictJoins">
+		LEFT JOIN sys_menu_dict b ON b.id =a.parent_id
+	</sql>
+    
+	<select id="get" resultType="SysMenuDict">
+		SELECT 
+			<include refid="sysMenuDictColumns"/>
+		FROM sys_menu_dict a
+		<include refid="sysMenuDictJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SysMenuDict">
+		SELECT 
+			<include refid="sysMenuDictColumns"/>
+		FROM sys_menu_dict a
+		<include refid="sysMenuDictJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		ORDER BY a.sort , a.create_date DESC
+	</select>
+	
+	<select id="findAllList" resultType="SysMenuDict">
+		SELECT 
+			<include refid="sysMenuDictColumns"/>
+		FROM sys_menu_dict a
+		<include refid="sysMenuDictJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	<select id="findByParentIdsLike" resultType="OrgDept">
+		SELECT
+		<include refid="sysMenuDictColumns"/>
+		FROM sys_menu_dict a
+		<include refid="sysMenuDictJoins"/>
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL} AND a.parent_ids LIKE #{parentIds}
+	</select>
+	<insert id="insert">
+		INSERT INTO sys_menu_dict(
+			id,
+			parent_id,
+			parent_ids,
+			name,
+			href,
+			target,
+			icon,
+			is_show,
+			sort,
+			permission,
+			del_flag,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks
+		) VALUES (
+			#{id},
+			#{parent.id},
+			#{parentIds},
+			#{name},
+			#{href},
+			#{target},
+			#{icon},
+			#{isShow},
+			#{sort},
+			#{permission},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks}
+		)
+	</insert>
+	<insert id="saveMenuVsService">
+		INSERT into service_vs_menu(service_id , menu_id )VALUES (#{serviceId},#{menuId})
+	</insert>
+	<select id="findMenusByService" resultType="String">
+		 SELECT a.menu_id FROM service_vs_menu a WHERE a.service_id=#{serviceId}
+	</select>
+	<update id="deleteMenuBy">
+		 DELETE FROM service_vs_menu WHERE service_id=#{serviceId}
+	</update>
+	<insert id="saveSelfServiceMenu">
+		 INSERT into org_self_service_vs_menu(self_service_id,menu_id) VALUES (#{selfServiceId},#{menuId})
+	</insert>
+	<select id="findMenusBySelfSev" resultType="String">
+		SELECT a.menu_id FROM org_self_service_vs_menu a WHERE a.self_service_id =#{selfServiceId}
+	</select>
+    <select id="findMenusBySelfServerAjax" resultType="SysMenuDict">
+        SELECT DISTINCT
+        ad.id AS "id",
+		ad.parent_id AS "parent.id",
+		ad.parent_ids AS "parentIds",
+		ad.name AS "name",
+		ad.href AS "href",
+		ad.target AS "target",
+		ad.icon AS "icon",
+		ad.is_show AS "isShow",
+		ad.sort AS "sort",
+		ad.permission AS "permission",
+		ad.del_flag AS "delFlag",
+		ad.create_by AS "createBy.id",
+		ad.create_date AS "createDate",
+		ad.update_by AS "updateBy.id",
+		ad.update_date AS "updateDate",
+		ad.remarks AS "remarks"
+        FROM sys_menu_dict ad LEFT JOIN org_self_service_vs_menu os ON ad.id=os.menu_id
+        WHERE os.self_service_id  in
+        <foreach collection="serviceId" item="serviceId" index="index"
+                 open="(" close=")" separator=",">
+            #{serviceId}
+        </foreach>
+        ORDER BY ad.sort , ad.create_date DESC
+    </select>
+    <select id="findServiceMenuAjax" resultType="SysMenuDict">
+        SELECT DISTINCT
+        ad.id AS "id",
+        ad.parent_id AS "parent.id",
+        ad.parent_ids AS "parentIds",
+        ad.name AS "name",
+        ad.href AS "href",
+        ad.target AS "target",
+        ad.icon AS "icon",
+        ad.is_show AS "isShow",
+        ad.sort AS "sort",
+        ad.permission AS "permission",
+        ad.del_flag AS "delFlag",
+        ad.create_by AS "createBy.id",
+        ad.create_date AS "createDate",
+        ad.update_by AS "updateBy.id",
+        ad.update_date AS "updateDate",
+        ad.remarks AS "remarks"
+        FROM sys_menu_dict ad LEFT JOIN org_role_vs_service os ON ad.id=os.menu_id
+        WHERE os.role_id=#{roleId} and os.service_id  in
+        <foreach collection="serviceId" item="serviceId" index="index"
+                 open="(" close=")" separator=",">
+         #{serviceId}
+        </foreach>
+        ORDER BY ad.sort , ad.create_date DESC
+    </select>
+
+    <select id="findServiceMenu" resultType="SysMenuDict">
+        SELECT DISTINCT
+        ad.id AS "id",
+		ad.parent_id AS "parent.id",
+		ad.parent_ids AS "parentIds",
+		ad.name AS "name",
+		ad.href AS "href",
+		ad.target AS "target",
+		ad.icon AS "icon",
+		ad.is_show AS "isShow",
+		ad.sort AS "sort",
+		ad.permission AS "permission",
+		ad.del_flag AS "delFlag",
+		ad.create_by AS "createBy.id",
+		ad.create_date AS "createDate",
+		ad.update_by AS "updateBy.id",
+		ad.update_date AS "updateDate",
+		ad.remarks AS "remarks"
+        FROM sys_menu_dict ad LEFT JOIN org_role_vs_service os ON ad.id=os.menu_id  LEFT JOIN staff_vs_role sr ON sr.role_id=os.role_id  LEFT JOIN org_staff of ON of.id=sr.staff_id
+        WHERE os.service_id=#{serviceId} AND of.user_id=#{userId} ORDER BY ad.sort , ad.create_date DESC
+    </select>
+	<update id="deleteSelfServiceMenu">
+		DELETE FROM org_self_service_vs_menu WHERE self_service_id = #{selfServiceId}
+	</update>
+	<update id="update">
+		UPDATE sys_menu_dict SET 	
+			parent_id = #{parent.id},
+			parent_ids = #{parentIds},
+			name = #{name},
+			href = #{href},
+			target = #{target},
+			icon = #{icon},
+			is_show = #{isShow},
+			sort = #{sort},
+			permission = #{permission},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_menu_dict SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	<select id="findMenuByOrgId" resultType="SysMenuDict">
+       SELECT
+       DISTINCT     a.id AS "id",
+		a.parent_id AS "parent.id",
+		a.parent_ids AS "parentIds",
+		a.name AS "name",
+		a.href AS "href",
+		a.target AS "target",
+		a.icon AS "icon",
+		a.is_show AS "isShow",
+		a.sort AS "sort",
+		a.permission AS "permission",
+		a.del_flag AS "delFlag",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks",
+		menu.name AS "parent.name" FROM sys_menu_dict a
+		LEFT JOIN sys_menu_dict menu ON menu.id =a.parent_id
+		LEFT JOIN service_vs_menu  b  ON a.id = b.menu_id
+		LEFT JOIN company_vs_service c ON b.service_id = c.service_id
+		WHERE c.company_id = #{orgId} ORDER BY a.sort , a.create_date DESC
+	</select>
+</mapper>

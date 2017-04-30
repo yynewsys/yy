@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.master.modules.sys.dao.PersonInfoDao">
+    
+	<sql id="personInfoColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.sex AS "sex",
+		a.id_card AS "idCard",
+		a.phone AS "phone",
+		a.email AS "email",
+		a.input_code as "inputCode",
+		a.nick_name AS "nickName",
+		a.del_flag AS "delFlag",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks"
+	</sql>
+	
+	<sql id="personInfoJoins">
+	</sql>
+
+    <select id="getNameByUserId" resultType="PersonInfo">
+        SELECT info.name
+        FROM sys_user su,person_info info
+        WHERE su.persion_id = info.id
+        AND su.id = #{id}
+    </select>
+    
+	<select id="get" resultType="PersonInfo">
+		SELECT 
+			<include refid="personInfoColumns"/>
+		FROM person_info a
+		<include refid="personInfoJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="PersonInfo">
+		SELECT 
+			<include refid="personInfoColumns"/>
+		FROM person_info a
+		<include refid="personInfoJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="PersonInfo">
+		SELECT 
+			<include refid="personInfoColumns"/>
+		FROM person_info a
+		<include refid="personInfoJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO person_info(
+			id,
+			name,
+			sex,
+			id_card,
+			phone,
+			email,
+			input_code,
+			nick_name,
+			del_flag,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks
+		) VALUES (
+			#{id},
+			#{name},
+			#{sex},
+			#{idCard},
+			#{phone},
+			#{email},
+			#{inputCode},
+			#{nickName},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE person_info SET 	
+			name = #{name},
+			sex = #{sex},
+			id_card = #{idCard},
+			phone = #{phone},
+			email = #{email},
+			input_code = #{inputCode},
+			nick_name = #{nickName},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE person_info SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

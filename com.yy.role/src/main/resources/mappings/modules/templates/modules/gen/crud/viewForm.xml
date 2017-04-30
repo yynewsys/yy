@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template>
+	<name>viewForm</name>
+	<filePath>src/main/webapp/WEB-INF/views/${lastPackageName}/${moduleName}/${subModuleName}</filePath>
+	<fileName>${className}Form.jsp</fileName>
+	<content><![CDATA[
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ include file="/WEB-INF/views/include/taglib.jsp"%>
+<div class="content-wrap">
+        <div class="wrapper" style="bottom: 50px;">
+            <ul class="nav nav-tabs">
+                <li>
+                    <a href="#"  onclick="loadDiv('mainCenterDiv','${r"${ctx}"}/${urlPrefix}/index')">${functionNameSimple}列表</a>
+                </li>
+                <li class="active">
+                    <a href="#" onclick="loadDiv('mainCenterDiv','${r"${ctx}"}/${urlPrefix}/form')">
+                        <c:choose>
+                            <c:when test="${"${"+className+".id==''|| "+className+".id==null}"}">
+                                ${functionNameSimple}添加
+                            </c:when>
+                            <c:otherwise>${functionNameSimple}修改</c:otherwise>
+                        </c:choose>
+                    </a>
+                </li>
+            </ul>
+            <section class="panel panel-default">
+                <div class="panel-body">
+                    <div class="col-lg-12">
+                        <form:form id="inputForm" data-parsley-validate="" modelAttribute="${className}" onsubmit="return formSaveLoad('mainCenterDiv','inputForm','${r"${ctx}"}/${urlPrefix}/save','${r"${ctx}"}/${urlPrefix}/index');" method="post" class="form-horizontal">
+                            <form:hidden path="id"/>
+                            <#list table.columnList as c>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">${c.comments}：</label>
+                                    <div class="col-sm-4">
+                                    <#if c.showType == "input">
+                                        <form:input path="${c.javaFieldId}" htmlEscape="false" class="form-control" <#if c.dataLength != "0"> maxlength="${c.dataLength}"</#if> />
+                                     </#if>
+                                    </div>
+                                </div>
+		                    </#list>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <input id="btnSubmit" class="btn btn-primary" type="submit" value="保 存">&nbsp;
+                                        <input id="btnCancel" class="btn" type="button" value="返 回" onclick="loadDiv('mainCenterDiv','${r"${ctx}"}/${urlPrefix}/index')">
+                                </div>
+                            </div>
+                        </form:form>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+    </div>]]>
+	</content>
+</template>

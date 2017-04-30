@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.master.modules.sys.dao.SysOrgDictDao">
+    
+	<sql id="sysOrgDictColumns">
+		a.id AS "id",
+		a.label AS "label",
+		a.type AS "type",
+		a.value AS "value",
+		a.sort AS "sort",
+		a.del_flag AS "delFlag",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks"
+
+	</sql>
+	
+	<sql id="sysOrgDictJoins">
+
+	</sql>
+    
+	<select id="get" resultType="SysOrgDict">
+		SELECT 
+			<include refid="sysOrgDictColumns"/>
+		FROM sys_org_dict a
+		<include refid="sysOrgDictJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+    <select id="getListByType" resultType="SysOrgDict">
+        SELECT *
+        FROM sys_dict s
+        WHERE s.del_flag = '0'
+        <if test="type != null and type != ''">
+            AND s.type = #{type}
+        </if>
+        ORDER BY s.value
+    </select>
+	
+	<select id="findList" resultType="SysOrgDict">
+		SELECT 
+			<include refid="sysOrgDictColumns"/>
+		FROM sys_org_dict a
+		<include refid="sysOrgDictJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="type!=null and type!=''">
+				and a.type = #{type}
+			</if>
+			<if test="label!=null and label!=''">
+				and a.label like concat('%',concat(#{label},'%'))
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.type, a.sort, a.update_date ASC
+			</otherwise>
+		</choose>
+	</select>
+	<select id="findTypeList" resultType="String">
+		SELECT
+		type
+		FROM sys_org_dict
+		WHERE del_flag = '0'
+		GROUP BY type
+		ORDER BY type
+	</select>
+    <select id="getSysOrgById" resultType="SysOrgDict">
+        SELECT
+        <include refid="sysOrgDictColumns"/>
+        FROM sys_org_dict a
+        <include refid="sysOrgDictJoins"/>
+        <where>
+            a.del_flag = '0' and a.type=#{type} and a.label=#{label}
+        </where>
+    </select>
+	<select id="findBloodMatchList" resultType="com.yy.master.modules.sys.vo.SysOrgDictVSClinicVo">
+		select a.id AS "id",
+		a.label AS "label",
+		a.type AS "type",
+		a.value AS "value",
+		cd.id as "itemId",
+		cd.item_code as "itemCode",
+		cd.item_class as "itemClass",
+		cd.item_name as "itemName",
+		od.id as "executiveDept.id",
+		od.dept_name as "executiveDept.deptName"
+		from sys_org_dict a
+		left join dict_vs_clinic dc on a.id=dc.dict_id and dc.org_id=#{orgId}
+		left join clinic_item_dict cd on dc.clinic_id=cd.id and cd.del_flag='0'  and dc.org_id=#{orgId}
+		left join org_dept od on dc.executive_dept=od.id and od.del_flag='0' and od.org_id=#{orgId}
+		<where>
+			a.del_flag='0'
+			<if test="type!=null and type!=''">
+				and a.type=#{type}
+			</if>
+			<if test="id!=null and id!=''">
+				and a.id=#{id}
+			</if>
+		</where>
+
+	</select>
+
+	<select id="findAllList" resultType="SysOrgDict">
+		SELECT 
+			<include refid="sysOrgDictColumns"/>
+		FROM sys_org_dict a
+		<include refid="sysOrgDictJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.type, a.sort, a.update_date ASC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="findVsListById" resultType="com.yy.master.common.web.impl.BaseDto">
+		select a.dict_id,a.clinic_id,b.item_class,b.item_code,b.item_name,b.input_code,od.dept_name from dict_vs_clinic a,org_dept od,clinic_item_dict b where a.clinic_id=b.id and a.executive_dept=od.id and a.dict_id=#{dictId} and a.org_id=#{orgId}
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO sys_org_dict(
+			id,
+			label,
+			type,
+			value,
+			sort,
+			del_flag,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks
+		) VALUES (
+			#{id},
+			#{label},
+			#{type},
+			#{value},
+			#{sort},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE sys_org_dict SET 	
+			label = #{label},
+			type = #{type},
+			value = #{value},
+			sort = #{sort},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE sys_org_dict SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

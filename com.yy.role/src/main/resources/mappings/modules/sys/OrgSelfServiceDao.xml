@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.master.modules.sys.dao.OrgSelfServiceDao">
+    
+	<sql id="orgSelfServiceColumns">
+		a.id AS "id",
+		a.org_id AS "orgId",
+		a.service_name AS "serviceName",
+		a.sort AS "sort",
+		a.del_flag AS "delFlag",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks"
+	</sql>
+	
+	<sql id="orgSelfServiceJoins">
+	</sql>
+    
+	<select id="get" resultType="OrgSelfService">
+		SELECT
+        a.id AS "id",
+        a.org_id AS "orgId",
+        a.service_name AS "serviceName",
+        a.sort AS "sort",
+        a.del_flag AS "delFlag",
+        a.create_by AS "createBy.id",
+        a.create_date AS "createDate",
+        a.update_by AS "updateBy.id",
+        a.update_date AS "updateDate",
+        a.remarks AS "remarks"
+		FROM org_self_service a
+		WHERE a.id = #{id}
+	</select>
+    <select id="findUserList" resultType="OrgSelfService">
+        SELECT DISTINCT
+          os.id AS "id",
+          os.org_id AS "orgId",
+          os.service_name AS "serviceName",
+          os.sort AS "sort",
+          os.del_flag AS "delFlag",
+          os.create_by AS "createBy.id",
+          os.create_date AS "createDate",
+          os.update_by AS "updateBy.id",
+          os.update_date AS "updateDate",
+          os.remarks AS "remarks"
+        FROM
+        staff_vs_role sr  LEFT JOIN   org_role_vs_service rs ON rs.role_id = sr.role_id
+         LEFT JOIN  org_self_service os  ON os.id = rs.service_id
+        WHERE sr.staff_id=#{orgStaffId} ORDER BY os.sort,os.update_date DESC
+    </select>
+
+
+	<select id="findList" resultType="OrgSelfService">
+		SELECT 
+			<include refid="orgSelfServiceColumns"/>
+		FROM org_self_service a
+		<include refid="orgSelfServiceJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="orgId!=null and orgId!=''">
+				AND a.org_id=#{orgId}
+			</if>
+			<if test="serviceName!=null and serviceName!=''">
+				AND a.service_name=#{serviceName}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.sort,a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="OrgSelfService">
+		SELECT 
+			<include refid="orgSelfServiceColumns"/>
+		FROM org_self_service a
+		<include refid="orgSelfServiceJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO org_self_service(
+			id,
+			org_id,
+			service_name,
+			sort,
+			del_flag,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks
+		) VALUES (
+			#{id},
+			#{orgId},
+			#{serviceName},
+			#{sort},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE org_self_service SET 	
+			org_id = #{orgId},
+			service_name = #{serviceName},
+			sort = #{sort},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE org_self_service SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+    <!--findServiceByRoleId-->
+    <select id="findServiceByRoleId" resultType="OrgSelfService">
+        SELECT  distinct A.ID AS 'serviceId',A.service_name AS 'serviceName'
+        FROM ORG_SELF_SERVICE A ,ORG_ROLE_VS_SERVICE B
+        WHERE A.id=B.service_id
+        <if test="orgId!=null and orgId!=''">
+            AND A.`org_id`=#{orgId}
+        </if>
+        <if test="roleId!=null and roleId!=''">
+            AND B.`role_id`=#{roleId}
+        </if>
+        ORDER BY A.sort,A.update_date DESC
+      </select>
+
+    <!--findMenuByServiceId-->
+    <select id="findMenuByServiceId" resultType="String">
+        select menu_id from org_self_service_vs_menu
+        where  self_service_id=#{serviceId}
+     </select>
+    <!--saveRoleVsService-->
+    <insert id="saveRoleVsService">
+        INSERT INTO org_role_vs_service(
+        id,
+        service_id,
+        role_id,
+        menu_id,
+        del_flag,
+        create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks
+        ) VALUES (
+        #{id},
+        #{serviceId},
+        #{roleId},
+        #{menuId},
+        #{delFlag},
+        #{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks}
+       )
+    </insert>
+
+<!--deleteFromRoleVsService-->
+
+    <delete id="deleteFromRoleVsService">
+        delete from org_role_vs_service where service_id=#{serviceId}
+        and role_id=#{roleId}
+    </delete>
+
+
+ </mapper>

@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.master.modules.sys.dao.CompanyDao">
+
+    <sql id="companyColumns">
+        id as "id",
+        org_name as "orgName",
+        org_code as "orgCode",
+        address as "address",
+        phone  as "phone",
+        link_man  as "linkman",
+        email  as "email",
+        apply_status as "applyStatus",
+        parent_ids as "parentIds",
+        parent_id as "parentId",
+        del_flag as "delFlag",
+        create_date as "createDate",
+        update_date as "updateDate",
+        remarks as "remarks"
+    </sql>
+    <select id="get" resultType="Company">
+		SELECT 
+        a.id as "id",
+        a.org_name as "orgName",
+        a.org_code as "orgCode",
+        a.address as "address",
+        a.phone  as "phone",
+        a.link_man  as "linkman",
+        a.email  as "email",
+        a.apply_status as "applyStatus",
+        a.parent_ids as "parentIds",
+        a.parent_id as "parentId",
+        b.id as "parent.id",b.org_name as "parent.orgName"
+		FROM sys_company a left join sys_company b on a.parent_id=b.id
+		WHERE a.id = #{id}
+	</select>
+
+    <select id="findList" resultType="Company">
+        SELECT
+        id as "id",
+        org_name as "orgName",
+        org_code as "orgCode",
+        address as "address",
+        phone as "phone",
+        link_man as "linkman",
+        email as "email",
+        apply_status as "applyStatus",
+        parent_id as "parentId",
+        parent_ids as "parentIds",
+        del_flag as "delFlag",
+        create_date as "createDate",
+        update_date as "updateDate",
+        remarks as "remarks"
+        FROM sys_company
+        WHERE del_flag = '0'
+        <if test="orgName != null and orgName != ''">
+            AND org_name LIKE
+            <if test="dbName == 'oracle'">'%'||#{orgName}||'%'</if>
+            <if test="dbName == 'mssql'">'%'+#{orgName}+'%'</if>
+            <if test="dbName == 'mysql'">CONCAT('%', #{orgName}, '%')</if>
+        </if>
+        ORDER BY parent_id,create_date DESC
+    </select>
+
+    <select id="findAllList" resultType="Company">
+        SELECT
+         id as "id",
+        org_name as "orgName",
+        org_code as "orgCode",
+        address as "address",
+        phone  as "phone",
+        link_man  as "linkman",
+        email  as "email",
+        apply_status as "applyStatus",
+        parent_ids as "parentIds",
+        parent_id as "parentId",
+        del_flag as "delFlag",
+        create_date as "createDate",
+        update_date as "updateDate",
+        remarks as "remarks"
+        FROM sys_company
+        WHERE del_flag = #{DEL_FLAG_NORMAL}
+        ORDER BY create_date DESC
+	</select>
+
+
+    <insert id="insert">
+		INSERT INTO sys_company
+            (id,
+             org_name,
+             org_code,
+             address,
+             phone,
+             link_man,
+             email,
+             apply_status,
+             parent_ids,
+             parent_id,
+             del_flag,
+             create_date,
+             update_date,
+             remarks)
+VALUES (#{id},
+        #{orgName},
+          #{orgCode},
+          #{address},
+          #{phone},
+          #{linkMan},
+          #{email},
+          #{applyStatus},
+          #{parentIds},
+          #{parentId},
+          #{delFlag},
+          #{createDate},
+          #{updateDate},
+          #{remarks})
+	</insert>
+
+    <update id="update">
+		UPDATE sys_company SET
+			 org_name=#{orgName},
+             org_code=#{orgCode},
+          address=#{address},
+          phone=#{phone},
+          link_man=#{linkMan},
+          email=#{email},
+          apply_status=#{applyStatus},
+          parent_ids=#{parentIds},
+          parent_id=#{parentId},
+          del_flag=#{delFlag},
+          create_date=#{createDate},
+          update_date=#{updateDate},
+          remarks=#{remarks}
+		WHERE id = #{id}
+	</update>
+
+    <update id="delete">
+		UPDATE sys_company SET
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+    <!--findServiceByOrg-->
+
+    <select id="findServiceByOrg" resultType="SysService">
+         SELECT
+          B.server_name AS 'serverName',
+          B.id AS 'serviceId',
+          c.`label` AS 'serverType',
+          d.`label` AS 'serverClass'
+         FROM
+          company_vs_service A,
+          sys_service B,
+          sys_dict c,
+          sys_dict d
+        WHERE A.`service_id` = B.`id`
+          AND b.service_type = c.value
+          AND b.service_type = d.value
+          AND c.`type`='service_type'
+          AND d.`type`='service_class'
+          AND A.`company_id`=#{id}
+    </select>
+
+    <!--saveCompanyVsService-->
+    <insert id="saveCompanyVsService">
+        INSERT INTO company_vs_service
+        (company_id,
+        service_id
+         )
+        VALUES (#{companyId},
+               #{serviceId}
+      )
+    </insert>
+    <!--deleteFromCompanyVsService-->
+
+    <delete id="deleteFromCompanyVsService">
+        delete from company_vs_service
+        where company_id=#{companyId}
+        and service_id=#{serviceId}
+    </delete>
+</mapper>

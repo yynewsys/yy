@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yy.master.modules.sys.dao.ExternalUrlDao">
+    <select id="get" resultType="ExternalUrl">
+        SELECT
+        *
+        FROM sys_external_url
+        WHERE id = #{id}
+    </select>
+    <select id="findList" resultType="ExternalUrl">
+        SELECT
+        *
+        FROM sys_external_url
+        WHERE del_flag = #{DEL_FLAG_NORMAL}
+        <if test="name != null and name != ''">
+            AND name like concat('%',concat(#{name},'%'))
+        </if>
+        AND org_id=#{orgId}
+    </select>
+    <select id="findAllList" resultType="ExternalUrl">
+        SELECT
+        *
+        FROM sys_external_url
+        WHERE del_flag = #{DEL_FLAG_NORMAL}
+        AND org_id=#{orgId}
+        ORDER BY type, update_date DESC
+    </select>
+    <insert id="insert">
+        INSERT INTO sys_external_url(
+         id,
+         org_id,
+         name,
+         url,
+         type,
+         del_flag,
+         create_by,
+         create_date,
+         update_by,
+         update_date,
+         remarks
+        ) VALUES (
+        #{id},
+        #{orgId},
+        #{name},
+        #{url},
+        #{type},
+        #{delFlag},
+        #{createBy.id},
+        #{createDate},
+        #{updateBy.id},
+        #{updateDate},
+        #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE sys_external_url SET
+        name = #{name},
+        url = #{url},
+        type = #{type},
+        del_flag= #{delFlag},
+        create_by = #{createBy.id},
+        create_date = #{createDate},
+        update_by = #{updateBy.id},
+        update_date = #{updateDate},
+        remarks = #{remarks}
+        WHERE id = #{id}
+    </update>
+
+    <update id="delete">
+        UPDATE sys_external_url SET
+        del_flag = #{DEL_FLAG_DELETE}
+        WHERE id = #{id}
+    </update>
+</mapper>

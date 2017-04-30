@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.master.modules.sys.dao.UserDao">
+
+
+	<sql id="sysUserJoins">
+	</sql>
+
+	<select id="get" resultType="User">
+		SELECT
+		<include refid="baseColumns"/>
+		FROM sys_user a
+		<include refid="baseJoins"/>
+		WHERE a.id = #{id}
+	</select>
+
+	<sql id="baseColumns">
+		a.id,
+		a.password,
+		a.persion_id as "persionId",
+		a.create_by AS "createBy.id",
+		a.create_date as "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date as "updateDate",
+		a.del_flag as "delFlag",
+		a.remarks,
+		a.user_type as "userType",
+		a.login_flag as "loginFlag",
+		a.current_login as "currentLogin",
+		pi.name as "name",
+		pi.id_card as "idCard",
+		pi.email as "email",
+		pi.phone as "phone",
+		os.org_id as "orgId",
+		os.dept_id as "orgDept.id",
+		os.title as "title",
+		os.id as "orgStaffId"
+	</sql>
+	<sql id="baseJoins">
+		left join person_info pi on pi.id=a.persion_id and pi.del_flag='0'
+		left join org_staff os on a.id=os.user_id and os.del_flag='0'
+	</sql>
+    <resultMap id="BasicColums" type="User">
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="password" property="password" />
+        <result column="persionId" property="persionId"/>
+        <result column="createBy.id" property="createBy.id" />
+        <result column="createDate" property="createDate" />
+        <result column="updateBy.id" property="updateBy.id" />
+        <result column="delFlag" property="delFlag" />
+        <result column="remarks" property="remarks"></result>
+        <result column="userType" property="userType"  />
+        <result column="loginFlag" property="loginFlag"  />
+        <result column="currentLogin" property="currentLogin" />
+        <result column="name" property="name"  />
+        <result column="idCard" property="idCard" />
+        <result column="email" property="email" />
+        <result column="phone" property="phone" />
+        <result column="orgId" property="orgId" />
+        <result column="orgDept.id" property="orgDept.id" />
+        <result column="title" property="title" />
+        <association property="orgSelfServiceList" column="{orgStaffId=orgStaffId}" select="com.yy.master.modules.sys.dao.OrgSelfServiceDao.findUserList"></association>
+    </resultMap>
+
+	<select id="getInfoById" resultMap="BasicColums">
+		select <include refid="baseColumns"/> from sys_user a
+		<include refid="baseJoins"/>
+		where a.id=#{id} and a.del_flag='0'
+	</select>
+	<select id="findUserByPersonId" resultType="User">
+		select a.id,
+		a.password,
+		a.persion_id as "persionId" from sys_user a
+		where a.persion_id=#{personId}
+	</select>
+
+	
+	<!-- 根据登录名查询用户 -->
+	<select id="getByLoginName" resultType="User" parameterType="User">
+		SELECT
+		a.id,
+		a.password as "password",
+		a.persion_id as "persionId",
+		a.create_by AS "createBy.id",
+		a.create_date as "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date as "updateDate",
+		a.del_flag as "delFlag",
+		a.remarks,
+		a.user_type as "userType",
+		a.login_flag as "loginFlag",
+		sln.login_name as "currentLogin",
+		sln.type as "type",
+		pi.name as "name",
+		pi.email as "email",
+		pi.phone as "phone"
+		FROM sys_login_name sln
+		left join sys_user a on a.id=sln.user_id and a.del_flag='0'
+		left join person_info pi on pi.id=a.persion_id and pi.del_flag='0'
+		WHERE sln.login_name = #{currentLogin} AND a.del_flag = '0'
+	</select>
+	
+	<!-- 分页查询用户信息 -->
+	<select id="findList" resultType="User">
+		SELECT
+		os.id as "staffId",
+		os.title,
+		os.user_id AS "id",
+		a.password,
+		a.persion_id AS "persionId",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag",
+		a.remarks,
+		a.user_type AS "userType",
+		a.login_flag AS "loginFlag",
+		a.current_login AS "currentLogin",
+		pi.id_card AS "idCard",
+		pi.name AS "name",
+		pi.email AS "email",
+		pi.phone AS "phone"
+		FROM org_staff os
+		LEFT JOIN  sys_user a ON a.id = os.user_id AND a.del_flag='0'
+		LEFT JOIN person_info PI ON pi.id=a.persion_id AND pi.del_flag='0'
+		WHERE os.del_flag = #{DEL_FLAG_NORMAL}
+		<if test="company != null and company.id != null and company.id != ''">
+			and os.org_id=#{company.id}
+		</if>
+		<if test="orgDept != null and orgDept.id != null and orgDept.id != ''">
+			and os.dept_id=#{orgDept.id}
+		</if>
+		<if test="name != null and name != ''">
+			and pi.name like concat(concat('%',#{name}),'%')
+		</if>
+		<if test="phone != null and phone != ''">
+			and pi.phone like concat(concat('%',#{phone}),'%')
+		</if>
+	</select>
+	
+	<!-- 根据OfficeId获取用户（树查询用户时用） -->
+	<select id="findUserByOfficeId" resultType="User" useCache="true">
+		SELECT
+			a.id, a.name, a.login_name
+		FROM sys_user a
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+			AND a.office_id = #{office.id}
+		ORDER BY a.name
+	</select>
+	
+	<!-- 查询全部用户 -->
+	<select id="findAllList" resultType="User">
+		SELECT
+		  a.id,
+		  a.password,
+		  a.persion_id    AS "persionId",
+		  a.create_by     AS "createBy.id",
+		  a.create_date   AS "createDate",
+		  a.update_by     AS "updateBy.id",
+		  a.update_date   AS "updateDate",
+		  a.del_flag      AS "delFlag",
+		  a.remarks,
+		  a.user_type     AS "userType",
+		  a.login_flag    AS "loginFlag",
+		  a.current_login AS "currentLogin",
+		  pi.id_card      AS "idCard",
+		  pi.name         AS "name",
+		  pi.email        AS "email",
+		  pi.phone        AS "phone"
+		FROM sys_user a
+		  LEFT JOIN person_info PI
+			ON pi.id = a.persion_id
+			  AND pi.del_flag = '0'
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+		<if test="name != null and name != ''">
+			and pi.name like concat(concat('%',#{name}),'%')
+		</if>
+		<if test="phone != null and phone != ''">
+			and pi.phone like concat(concat('%',#{phone}),'%')
+		</if>
+	</select>
+	
+	<!-- 查询全部用户数目 -->
+	<select id="findAllCount" resultType="long">
+		SELECT
+			COUNT(1)
+		FROM sys_user a
+		WHERE a.del_flag = #{DEL_FLAG_NORMAL}
+	</select>
+	
+	<!-- 插入用户 -->
+	<insert id="insert">
+		INSERT INTO sys_user(
+			id,
+			password,
+			current_login,
+			login_flag,
+			persion_id,
+			del_flag,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks,
+			user_type
+		) VALUES (
+			#{id},
+			#{password},
+			#{currentLogin},
+			#{loginFlag},
+			#{persionId},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks},
+			#{userType}
+		)
+	</insert>
+	
+	<!-- 更新用户 -->
+	<update id="update">
+		UPDATE sys_user SET
+			current_login = #{currentLogin},
+			login_flag = #{loginFlag},
+			persion_id = #{persionId},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks},
+			user_type = #{userType}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 删除用户和角色关联表数据 -->
+	<delete id="deleteUserRole">
+		DELETE FROM sys_user_role WHERE user_id = #{id}
+	</delete>
+	
+	<!-- 插入用户和角色关联表数据 -->
+	<insert id="insertUserRole">
+		INSERT INTO sys_user_role(user_id, role_id)
+		<foreach collection="roleList" item="role" separator=" union all ">
+			SELECT #{id}, #{role.id}
+			<if test="dbName != 'mssql'">
+			FROM dual
+			</if>
+		</foreach>
+	</insert>
+	
+	<!-- 更新用户信息  -->
+	<update id="updateUserInfo">
+		UPDATE sys_user SET 
+			email = #{email}, 
+			phone = #{phone}, 
+			mobile = #{mobile}, 
+			update_by = #{updateBy.id}, 
+			update_date = #{updateDate}, 
+			remarks = #{remarks},
+			photo = #{photo}
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 更新用户密码 -->
+	<update id="updatePasswordById">
+		UPDATE sys_user SET 
+			password = #{password} 
+		WHERE id = #{id}
+	</update>
+	
+	<!-- 更新登录信息，如登录IP、登录时间 -->
+	<update id="updateLoginInfo">
+		UPDATE sys_user SET 
+			current_login = #{currentLogin}
+		WHERE id = #{id}
+	</update>
+
+	
+	<!-- 逻辑删除用户 -->
+	<update id="delete">
+		UPDATE sys_user SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+
+
+    <select id="getFindUser" resultType="com.yy.master.common.web.impl.BaseDto">
+        SELECT
+        su.id AS "staffid",
+        su.id AS "userId",
+        su.id,
+        od.dept_name,
+        pf.NAME,
+        pf.phone,
+        pf.email
+        FROM sys_user su
+        LEFT JOIN org_staff os
+        ON su.id = os.user_id
+        LEFT JOIN person_info pf
+        ON su.persion_id = pf.id
+        LEFT JOIN org_dept od
+        ON os.dept_id = od.id
+        WHERE su.id in
+        <foreach collection="userIds" item="userId" index="index"
+                 open="(" separator="," close=")">#{userId}
+        </foreach>
+    </select>
+     <select id="findUserByDeptId" resultType="User">
+        SELECT
+            b.id AS 'userId',
+            c.name AS 'userName'
+        FROM
+          org_staff a,
+          sys_user b,
+          person_info c
+        WHERE b.`persion_id` = c.`id`
+        AND a.`user_id`=b.`id`
+        AND a.`dept_id`=#{deptId}
+    </select>
+	<select id="getRoleUserList" resultType="User">
+		SELECT DISTINCT a.id,e.id AS "persionId",e.name,e.sex,e.id_card,e.phone,e.email,d.dept_id
+	FROM sys_user a,
+	  org_group_vs_user b,
+	  org_dept_group c,
+	  org_group_vs_dept d,
+	  person_info e
+	WHERE a.id = b.user_id
+		AND b.group_id = c.id
+		AND c.id = d.group_id
+		AND a.persion_id = e.id
+		AND a.del_flag='0'
+		AND c.del_flag='0'
+		AND e.del_flag='0'
+    	AND d.dept_id = #{deptId}
+	</select>
+	
+</mapper>

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.master.modules.sys.dao.OrgDeptGroupDao">
+    
+	<sql id="orgDeptGroupColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.sort AS "sort",
+		a.del_flag AS "delFlag",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks"
+	</sql>
+	
+	<sql id="orgDeptGroupJoins">
+	</sql>
+    
+	<select id="get" resultType="OrgDeptGroup">
+		SELECT 
+			<include refid="orgDeptGroupColumns"/>
+		FROM org_dept_group a
+		<include refid="orgDeptGroupJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OrgDeptGroup">
+		SELECT 
+			<include refid="orgDeptGroupColumns"/>
+		FROM org_dept_group a
+		<include refid="orgDeptGroupJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name like concat('%',concat(#{name},'%'))
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.sort ASC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="OrgDeptGroup">
+		SELECT 
+			<include refid="orgDeptGroupColumns"/>
+		FROM org_dept_group a
+		<include refid="orgDeptGroupJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+
+	<select id="findUserList" resultType="com.yy.master.common.web.impl.BaseDto">
+		SELECT
+		  su.id as "staffid",
+		  su.id as "userId",
+		  su.id,
+		  od.dept_name,
+		  pf.name,
+		  pf.phone,
+		  pf.email
+		FROM org_group_vs_user ov
+		  LEFT JOIN sys_user su
+			ON ov.user_id = su.id
+		  LEFT JOIN org_staff os
+			ON su.id = os.user_id
+		  LEFT JOIN person_info pf
+			ON su.persion_id = pf.id
+		  LEFT JOIN org_dept od
+			ON os.dept_id = od.id
+			where ov.group_id=#{id}
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO org_dept_group(
+			id,
+			name,
+			sort,
+			del_flag,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks
+		) VALUES (
+			#{id},
+			#{name},
+			#{sort},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE org_dept_group SET 	
+			name = #{name},
+			sort = #{sort},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE org_dept_group SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

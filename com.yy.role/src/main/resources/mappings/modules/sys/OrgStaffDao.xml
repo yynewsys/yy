@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yy.master.modules.sys.dao.OrgStaffDao">
+    
+	<sql id="orgStaffColumns">
+		a.id AS "id",
+		a.org_id AS "orgId",
+		a.user_id AS "user.id",
+		a.dept_id AS "deptId",
+		a.title AS "title",
+		a.del_flag AS "delFlag",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.remarks AS "remarks"
+	</sql>
+	
+	<sql id="orgStaffJoins">
+		LEFT JOIN sys_user u3 ON u3.id = a.user_id and u3.del_flag='0'
+	</sql>
+    
+	<select id="get" resultType="OrgStaff">
+		SELECT 
+			<include refid="orgStaffColumns"/>
+		FROM org_staff a
+		<include refid="orgStaffJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	<select id="findByUserId" resultType="OrgStaff">
+		SELECT
+		<include refid="orgStaffColumns"/>
+		FROM org_staff a
+		<include refid="orgStaffJoins"/>
+		WHERE a.del_flag='0' and  a.user_id = #{userId}
+	</select>
+
+	
+	<select id="findList" resultType="OrgStaff">
+		SELECT 
+			<include refid="orgStaffColumns"/>
+		FROM org_staff a
+		<include refid="orgStaffJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="title != null and title != ''">
+				AND a.title LIKE 
+					<if test="dbName == 'oracle'">'%'||#{title}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{title}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{title},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="OrgStaff">
+		SELECT 
+			<include refid="orgStaffColumns"/>
+		FROM org_staff a
+		<include refid="orgStaffJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO org_staff(
+			id,
+			org_id,
+			user_id,
+			dept_id,
+			title,
+			del_flag,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			remarks
+		) VALUES (
+			#{id},
+			#{orgId},
+			#{user.id},
+			#{deptId},
+			#{title},
+			#{delFlag},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{remarks}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE org_staff SET 	
+			org_id = #{orgId},
+			user_id = #{user.id},
+			dept_id = #{deptId},
+			title = #{title},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			remarks = #{remarks}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE org_staff SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	<update id="removeByUserId">
+		UPDATE org_staff SET
+		del_flag = '1'
+		WHERE user_id = #{userId}
+	</update>
+
+	<delete id="delByUserId">
+		delete from org_staff where user_id=#{userId}
+	</delete>
+	
+
+
+     <!--查询人员信息-->
+    <select id="findJoinPerson" resultType="OrgStaff">
+        SELECT
+        u3.id AS 'staffId',
+        c.name AS 'name'
+        FROM
+        org_staff a
+        LEFT JOIN sys_user u3
+        ON u3.id = a.user_id,
+        sys_user b,
+        person_info c
+        WHERE a.del_flag = '0'
+        AND a.org_id = #{orgId}
+        AND u3.del_flag = '0'
+        AND a.user_id = b.id
+        AND b.persion_id = c.id
+      </select>
+
+
+    <!--findUserInfo-->
+
+    <select id="findUserInfo" resultType="OrgStaff">
+        SELECT
+            f.dept_name as 'deptName',
+            c.name as 'name',
+            c.phone as 'phone',
+            a.id as 'id',
+            e.id as 'roleId',
+            e.role_name as 'roleName',
+            a.id as 'staffId'
+        FROM org_staff a,sys_user b,person_info c,staff_vs_role d,org_role e,org_dept f
+         <where>
+            d.staff_id=a.id
+            and  a.del_flag='0'
+            and d.role_id=e.id
+            and a.dept_id=f.id
+            and a.user_id=b.id
+            and b.persion_id=c.id
+            and e.id=#{id}
+          </where>
+    </select>
+    <!--findUserByDeptId-->
+    <select id="findUserByDeptId" resultType="OrgStaff">
+        SELECT A.`id` AS 'id',D.NAME AS 'NAME',c.id as "user.id" FROM ORG_STAFF A,ORG_DEPT B ,SYS_USER C,PERSON_INFO D
+        WHERE
+        A.`dept_id`=B.`id`
+        and a.del_flag='0'
+        AND A.`user_id`=C.`id`
+        AND C.`persion_id`=D.`id`
+        AND B.`id`=#{deptId}
+    </select>
+    <!--findJoinbyId-->
+
+    <select id="findJoinbyId" resultType="OrgStaff">
+        SELECT C.NAME AS 'NAME' FROM  ORG_STAFF A,SYS_USER B,PERSON_INFO C
+        WHERE A.`user_id`=B.`id`
+        AND B.`persion_id`=C.`id`
+        AND A.ID=#{id}
+    </select>
+
+<!--saveStaffVsRole-->
+
+    <insert id="saveStaffVsRole">
+        INSERT INTO staff_vs_role(
+           staff_id,
+           role_id
+        ) VALUES (
+          #{id},
+          #{roleId}
+         )
+    </insert>
+
+<!--deleteFromStaffVsRole-->
+    <delete id="deleteFromStaffVsRole">
+        delete from staff_vs_role  where staff_id=#{staffId}
+        and role_id=#{roleId}
+    </delete>
+    <delete id="deleteVsRole">
+        delete from staff_vs_role  where role_id=#{roleId}
+    </delete>
+
+
+</mapper>
