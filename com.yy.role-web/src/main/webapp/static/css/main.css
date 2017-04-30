@@ -1,0 +1,399 @@
+fieldset{padding:.35em .625em .75em;margin:0 2px;border:1px solid silver}
+legend{padding:1px;font-size:16px;border:0;width:auto;margin: 0px}
+.table {
+    margin-bottom: 10px;
+}
+.height-100{
+    height: 100%;
+}
+.main-navigation{
+    background-color: rgba(41, 52, 82,0.7);
+}
+.bg-white-content{
+    background-color: rgba(248, 248, 248,1);
+    color: #59595a;
+}
+
+
+.height-170{
+    height: 170px
+}
+.overflow-auto{
+    overflow:auto;
+}
+.m0{
+    margin: 0px;
+}
+.p0{
+    padding: 0px;
+}
+.div_title{
+    height: 31px;
+    background: linear-gradient(to bottom,#E6E6E6,#FBF8F8);
+    z-index: 1;
+    border: 1px #E6E6E6 solid;
+}
+.div_title>.green {
+    z-index: 2;
+    background: url(../images/green.png) no-repeat;
+}
+.div_title>.green>.green-01 {
+    z-index: 3;
+    background: url(../images/green-01.png) no-repeat;
+    font-size: 20px;
+    color: #FFF;
+    font-weight: bold;
+    line-height: 30px;
+    padding-left: 10px;
+}
+.item_b{
+    border: 1px solid #e3e6f3;
+    background-color: #EEE;
+}
+.pagination {
+    margin: 0;
+    float: right
+}
+.usual_label{
+    padding-top: 7px;font-weight:100
+}
+.select2-container .select2-choice{
+    height: 34px;
+}
+.select2-container{
+    padding: 0px;
+    border: 0px;
+}
+@media (min-width: 768px){
+    .form-inline .form-control{
+        width: 175px;
+    }
+}
+.right-border{
+    border-right: 1px;
+    border-style: solid;
+    border-color: #E3E6F3;
+}
+.btn-rigth{
+    float: right;
+    margin:2px 20px auto auto;
+}
+.btn-rigth button{
+    margin:5px
+}
+.bg-color{
+    background-color: #fff;
+}
+.pagination ul {
+    display: inline-block;
+    *display: inline;
+    margin-bottom: 0;
+    margin-left: 0;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    *zoom: 1;
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.pagination ul > li {
+    display: inline;
+}
+
+.pagination ul > li > a,
+.pagination ul > li > span {
+    float: left;
+    padding: 4px 12px;
+    line-height: 20px;
+    text-decoration: none;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-left-width: 0;
+}
+
+.pagination ul > li > a:hover,
+.pagination ul > li > a:focus,
+.pagination ul > .active > a,
+.pagination ul > .active > span {
+    background-color: #f5f5f5;
+}
+
+.pagination ul > .active > a,
+.pagination ul > .active > span {
+    color: #999999;
+    cursor: default;
+}
+
+.pagination ul > .disabled > span,
+.pagination ul > .disabled > a,
+.pagination ul > .disabled > a:hover,
+.pagination ul > .disabled > a:focus {
+    color: #999999;
+    cursor: default;
+    background-color: transparent;
+}
+
+.pagination ul > li:first-child > a,
+.pagination ul > li:first-child > span {
+    border-left-width: 1px;
+    -webkit-border-bottom-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    -webkit-border-top-left-radius: 4px;
+    border-top-left-radius: 4px;
+    -moz-border-radius-bottomleft: 4px;
+    -moz-border-radius-topleft: 4px;
+}
+
+.pagination ul > li:last-child > a,
+.pagination ul > li:last-child > span {
+    -webkit-border-top-right-radius: 4px;
+    border-top-right-radius: 4px;
+    -webkit-border-bottom-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    -moz-border-radius-topright: 4px;
+    -moz-border-radius-bottomright: 4px;
+}
+.pagination .controls input{border:0;color:#999;width:30px;padding:0;margin:-3px 0 0 0;text-align:center;}
+.pagination .controls a {
+    border: 0;
+}
+.wrapper-img{
+    background: url(../images/bg.png) no-repeat center center;
+    filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod='scale')";
+    -moz-background-size: 100% 100%;
+    background-size: 100% 100%;
+}
+.help-inline{
+    color: #7b7b7b;
+    padding-left: 5px;
+    vertical-align: -webkit-baseline-middle;
+    font-family: Helvetica,Georgia,Arial,sans-serif,宋体;
+    font-size: 13px;
+}
+.datatable th{
+    text-align: center;
+}
+
+.tags_new {
+    border-bottom: 1px solid #d1d1d1;
+    background: #ddd;
+    padding-left: 0;
+    margin-bottom:0
+}
+.tags_new li{
+    width: 33%;
+    FLOAT: left;
+    text-align: center;
+    LIST-STYLE-TYPE: none;
+    border-top: 2px solid #dedede;
+}
+.tags_new LI.selectTag {
+    border: none;
+    background: #ebebeb;
+    border-top: 2px solid #1c765d;
+}
+.tags_new LI.selectTag A {
+    COLOR: #000;
+}
+.nav-stacked{
+    background: #EBEBEB;
+}
+.nav-stacked  li a {
+    padding: 3px 0 3px 8px;
+    border-bottom: 1px solid #ccc;
+    /* line-height: 24px; */
+}
+.nav-stacked>.selected>a{
+    color: #2b8d74;
+    background-color: #FFFFFF;
+}
+.tags_new LI A {
+    float: left;
+    padding: 0 4px;
+    LINE-HEIGHT: 30px;
+    HEIGHT: 30px;
+    width: 100%;
+    TEXT-DECORATION: none;
+    border-right: 1px solid #ccc;
+}
+.sidebar-230{
+    width: 230px;
+}
+.panel{
+    background-color:rgba(255,255,255,0.92)
+}
+
+.navbar-brand{
+    padding: 0px 5px;
+}
+@media screen and (max-width: 765px) {
+    .sidebar-230{
+        width: 100%;
+    }
+    .foot-search{
+        display: none;
+    }
+}
+
+.choice-wrap {
+    border-bottom: 1px solid #ccc;
+    padding: 5px;
+    width: 100%;
+    background: #EBEBEB;
+}
+.foot-search {
+    width: 229px;
+    position: fixed;
+    bottom: 0px;
+    background: #d7d7d7;
+    padding: 8px 10px 50px 0;
+}
+.sear-btn {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    z-index: 2;
+    border: 1px solid #ccc;
+    height: 35px;
+    width: 50px;
+}
+.sear-input {
+    width: 190px;
+    height: 35px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+.table-selected{
+    background-color:#CAD4CF;
+}
+.drugCenterUl{
+    list-style: none;
+}
+.drugCenterUl li{
+    background: #f8f8f8;
+    display: inline-block;
+    width: 24%;
+    height: 50px;
+    line-height:50px;
+    vertical-align: middle;
+    margin: 2px;
+    padding: 7px;
+    border: 1px dashed #ccc;
+}
+.drugCenterUl li .gram{
+    color: #15db81;
+    font-size: 16px;
+}
+
+/* 遮罩层 */
+#maskLayer{position: absolute;left:0px;top:0px}
+#alphadiv{position:absolute;background:#000;z-index: 2000}
+#drag{position:absolute;background:#fff;z-index: 2001;width:580px;border:1px solid #ccc}
+#drag_h{line-height:28px;height:28px;cursor:move;color:#fff;background: #52A4BD;;border-bottom:1px dashed #babcbc;padding:0 10px}
+#drag h3 b{float:left}
+#drag h3 span{font-weight:normal;float:right;cursor:pointer}
+#sublist{position:absolute;z-index:2100;background:#fff}
+
+/* 选择工作地区 */
+.drag-main{padding:10px 4px}
+.drag-main h4{color:#F90;font-size:14px;}
+.drag-main dl{zoom:1;overflow:hidden;line-height:25px}
+.drag-main dt{width:75px;font-weight:bold;float: left;}
+.drag-main dd{width:100%;}
+.drag-main dd li{float:left;width:25%;cursor:pointer;text-indent:16px;height:25px;overflow:Hidden}
+
+.drag-selected{border-bottom:1px dashed #ccc;margin-bottom:10px;padding-bottom:6px}
+.drag-selected dt{font-size:14px;color:#52A4BD}
+.drag-main-div>.selected{background-image:url(../images/chk_off.gif);background-repeat:no-repeat;background-position:2px 6px}
+.drag-main-div>.chkON{background-image:url(../images/chk_on.gif)}
+.drag-main-div li:hover{background-color:#f90;color:#fff}
+
+div,form,img,ul,ol,li,dl,dt,dd{margin:0;padding:0;border:0}
+li{list-style:none;list-style-position:outside}
+h1,h2,h3,h4,h5,h6{margin:0;padding:0;font-size:12px}
+.conter{padding:10px;width:90%;float:left;}
+.conter>.selected{
+    background: #A9F5CB;
+}
+/*医生住院病人列表*/
+.conter-card{float:left;border-radius:5px;border:1px #dcdcdf solid;background:#D7FBE7;width:18.5%;margin-right:10px;margin-bottom:10px;padding:10px;color:#000;font-size:16px;}
+.conter-card-top{border-bottom:1px #CCC dashed;height:50px;}
+.conter-card-top>.img{float:left;}
+.conter-card-top>.img img{width: 44px;}
+.conter-card-top>.img:hover{transform:scale(1.2);}
+@media screen and (max-width: 765px) {
+    .conter-card{float:left;border-radius:5px;border:1px #dcdcdf solid;background:#D7FBE7;width:100%;margin-right:10px;margin-bottom:10px;padding:10px;color:#000;font-size:16px;}
+}
+.miss{width: 100%}
+.height-23{
+    height: 23px;
+}
+.miss-top{margin-bottom:8px;}
+.conter-card:hover{box-shadow:3px 3px 10px #CCC;}
+.conter-card-bottom-left,.conter-card-bottom-right{float:left;}
+.conter-card-bottom>ul{margin:0px;padding:0px;}
+.conter-card-bottom>ul>li:nth-child(2),.conter-card-bottom>ul>li:nth-child(1){margin-top:3px;}
+.conter-card-bottom>ul>li>.title{color: #525252;line-height: 180%;width: 55%;text-align: right;float: left;font-size: 14px;}
+.conter-card-bottom>ul>li>.text{width: 45%;text-align: left;float: left;font-size: 13px}
+.float{float:left;width:8%;margin-top:10px;text-align:center;line-height:40px;}
+.float-btn{width:100%;border-radius:5px;height:40px;margin-bottom:10px;color:#FFF;font-weight:800;font-size:14px;}
+.float-btn:hover{transform:scale(1.2);}
+.btn-sousuo{border:1px #5de894 solid;background:#5de894}
+.btn-new{border:1px #bbeb55 solid;background:#bbeb55;}
+.btn-in{border:1px #52d3fa solid;background:#52d3fa;}
+.btn-out{border:1px #fc9185 solid;background:#fc9185;}
+.btn-cet{border:1px #db6f2f solid;background:#db6f2f;}
+.right{float:right;width:2%;margin-top:30px;}
+.bottom-btn{margin-bottom:50px;}
+.right-bottom-sousuo{border-bottom:1px #5de894 solid;margin-bottom:45px;}
+.right-bottom-new{border-bottom:1px #bbeb55 solid;}
+.right-bottom-in{border-bottom:1px #52d3fa solid;}
+.right-bottom-out{border-bottom:1px #fc9185 solid;}
+.right-bottom-cet{border-bottom:1px #edb562 solid;}
+/*医生住院病人列表结束*/
+/*护士住院病人*/
+
+.center-main{width:25%;float:left;padding-top:5px;font-size:12px;}
+.center-main>.selected{
+    background: linear-gradient(to bottom,#fdffff,#2EC2A7);
+}
+@media screen and (max-width: 765px) {
+    .center-main{width:100%;float:left;padding-top:5px;font-size:12px;}
+}
+.center-card{border-radius:5px;padding-left:5px;border:1px #e1f4ff solid;color:#0000ff;border-top:5px #afe7fd solid;background:linear-gradient(to bottom,#fdffff,#ebf7ff);width:90%;margin-bottom:10px;}
+.center-card:hover{transform:scale(1.1);transition:all 0.2s;box-shadow:5px 5px 5px #c5e3fc;color:#0606eb;}
+.center-card-top{height:60px;width:100%;}
+.boby{float:right;position:relative;top:-70px;right:-10px;}
+.boby:hover{transform:rotate(360deg);transition:all 0.5s;}
+.center-card-bed{width:15%;height:30px;background:linear-gradient(to bottom,#afe7fd,#84d1f6);border-bottom-right-radius:5px;border-bottom-left-radius:5px;font-size:16px;font-weight:bold;color:#FFF;text-align:center;line-height:30px;float:left;}
+.center-card-miss{float:left;padding-top:10px;padding-left:10px;font-size:10px;height:40px;padding:10px;}
+.center-card-bottom ul{text-align:left;}
+.center-card-bottom ul li{height:25px;list-style:none;}
+.center-card-bottom ul li label{width:30%;text-align: right;float:left;font-weight:200;}
+.foot{width:100%;height:40px;background:#ffffff;border-top:1px #CCC solid;border-bottom:1px #CCC solid;position:fixed;bottom:0px;font-size:14px;}
+.foot ul li{height:40px;list-style:none;float:left;margin-right:20px;line-height:40px;padding-left:10px;}
+/*护士住院病人列表结束*/
+/*门诊病历开始*/
+.history{height:200px;overflow: hidden;}
+.complaint{border-bottom:2px #1AB89B solid;margin-bottom:10px;}
+.complaint>div{border-bottom:3px #1EF7CF solid;width:8%;color:#1AB89B;font-size:16px;text-align:center;font-family:"微软雅黑";font-weight:bold;}
+.complaint-input:hover{box-shadow:0px 0px 3px #1EF7CF;}
+.complaint-input{border-radius:5px;border:1px #E6E6E6 solid;min-height:156px;width:100%;background:#FAFAFA;font-size:16px;;color:#121212;margin-bottom:10px;padding:5px;}
+.omplaint-table{min-height:160px;background:#E6E6E6;border-radius:5px;border:1px #E6E6E6 solid;}
+.complaint-examine{height: 285px;overflow: hidden;border-radius:5px;border:1px #E6E6E6 solid;min-height:200px;width:100%;font-size:16px;;color:#121212;margin-bottom:10px;}
+.complaint-check{background:#D5EAFB;height:40px;margin-bottom:10px;border-top-left-radius:5px;border-top-right-radius:5px;padding-left:10px;line-height:40px;}
+.animal{float:left;width:23%;}
+.animal>.form-input{width:100px;height:35px;border-radius:5px;border:1px #E6E6E6 solid;background:#FFF;padding:3px;}
+.animal>.form-input:hover{box-shadow:0px 0px 3px #1EF7CF;}
+/*门诊病历结束*/
+/*预约手术开始*/
+.opertion_items{height:40px;background:#66FFCC;}
+.opertion_items>div{width: 100%;line-height:40px;font-size:18px;background:url(../images/option.png) no-repeat;padding-left:10px;float:left;}
+.button_position{
+    height: 34px;
+    margin-bottom: 10px;
+}
+/*预约手术结束*/

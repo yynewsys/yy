@@ -1,0 +1,67 @@
+@charset "utf-8";
+/* CSS Document */
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px white inset !important;
+}
+body{
+    background: url('../images/login/login.jpg')top center no-repeat;
+    background-size:cover;
+}
+.login-main{
+    width:407px;
+    height:400px;
+    position: absolute;
+    top: 15%;
+}
+.login-left{
+    background: url('../images/login/left-pic.png')top center no-repeat;
+    left: 10%;
+}
+
+.login-right{
+    right: 10%;
+    background: url('../images/login/right-pic.png')top center no-repeat;
+}
+@media (max-width: 768px){
+    .login-left{
+        display: none;
+    }
+    .login-right{
+        right: 50%;
+        margin-right: -203px;
+    }
+}
+.submitBtn{
+    background:url('../images/login/bottom.png');
+    width:337px;
+    height:44px;
+    border:none;
+    outline:none;
+    bottom: 0px;
+    position: absolute;
+}
+.login{
+    bottom: 25px;
+    position: absolute;
+    width: 337px;
+    height: 200px;
+    left: 35px;
+}
+.login input{
+    height: 30px;
+    float:right;
+    margin-top: 25px;
+    width: 216px;
+    border:none;
+    outline:none;
+    border-radius:15px;
+}
+.login .password{
+    margin-top: 29px;
+}
+.login .top{
+    margin-top: 25px;
+    float: left;
+    width: 216px;
+    margin-top: 25px;
+}

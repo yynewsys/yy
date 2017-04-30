@@ -1,0 +1,13 @@
+.form-bt{
+  max-width: 106px;
+  height: 107px;
+  margin: 0 auto;
+  background-attachment: scroll;
+  background-image: url(../../../../images/co2.png);
+  background-repeat: no-repeat;
+}
+.info-wrapper {
+  box-shadow: 0 1px 0 rgba(256,256,256,.4) inset;
+  border-top: 1px solid #d9d9d9;
+  padding-top: 8px;
+}
